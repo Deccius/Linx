@@ -21,6 +21,7 @@
                     </td>
                     <td>
                         <asp:TextBox runat="server" ID="txtDtNascto" Height="30px" Columns="10" MaxLength="10" ></asp:TextBox>
+                        <asp:Label runat="server" ID="lblErroNascto" Visible="false" Font-Size="Smaller" Font-Color="red" Text="*Data de Nascimento Inválida" ForeColor="Red"></asp:Label>
                     </td>
                 </tr>
 
@@ -30,6 +31,7 @@
                     </td>
                     <td>
                         <asp:TextBox runat="server" ID="txtVrDinheiro" Height="30px" Columns="25"></asp:TextBox>
+                        <asp:Label runat="server" ID="lblErroDinheiro" Visible="false" Font-Size="Smaller" Font-Color="red" Text="*Somente valores númericos permitidos neste campo" ForeColor="Red"></asp:Label>
                     </td>
                 </tr>
 
@@ -37,8 +39,9 @@
                     <td></td>
                     <td align="right">
                         <asp:Button runat="server" Text="Salvar" ID="btnGravaPessoa" OnClick="btnGravaPessoa_Click" Height="30px" Width="60px" Font-Size="Small" />
+                        <asp:Button runat="server" Text="Editar" ID="btnEditaPessoa" OnClick="btnEditaPessoa_Click" Height="30px" Width="60px" Font-Size="Small" Visible="false" />
                         <asp:Button runat="server" Text="Limpar" ID="btnLimpa" OnClick="btnLimpa_Click" Height="30px" Width="60px" Font-Size="Small" />
-                        <asp:Label runat="server" ID="lblEdita" Visible="false" Text="-1"></asp:Label>
+                        <asp:Label runat="server" ID="lblEdita" Visible="false" Text="-1" Style="font-size:xx-small"></asp:Label>
                     </td>
                 </tr>
             </table>

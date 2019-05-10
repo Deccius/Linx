@@ -21,6 +21,11 @@ namespace CadastroPessoas
 
         protected void btnGravaPessoa_Click(object sender, EventArgs e)
         {
+            if(!ValidaCampos())
+            {
+                return;
+            }
+
             ListaPessoa = this.ViewState["Lista"] as List<Pessoa>;
 
             if (ListaPessoa == null)
@@ -28,34 +33,28 @@ namespace CadastroPessoas
                 ListaPessoa = new List<Pessoa>();
             }
 
-            if (btnGravaPessoa.Text == "Editar")
+
+            Pessoa dbPessoa = new Pessoa();
+
+            dbPessoa.Nome = txtNomePessoa.Text;
+            dbPessoa.DtNascto = DateTime.Parse(txtDtNascto.Text);
+            dbPessoa.Idade = DateTime.Now.Year - dbPessoa.DtNascto.Year;
+
+            if (DateTime.Now.Month < dbPessoa.DtNascto.Month || (DateTime.Now.Month == dbPessoa.DtNascto.Month && DateTime.Now.Day < dbPessoa.DtNascto.Day))
             {
-                EditaLinha();
+                dbPessoa.Idade--;
             }
 
-            else
-            {
-                Pessoa dbPessoa = new Pessoa();
+            dbPessoa.Dinheiro = Decimal.Parse(txtVrDinheiro.Text);
 
-                dbPessoa.Nome = txtNomePessoa.Text;
-                dbPessoa.DtNascto = DateTime.Parse(txtDtNascto.Text);
-                dbPessoa.Idade = DateTime.Now.Year - dbPessoa.DtNascto.Year;
+            ListaPessoa.Add(dbPessoa);
+            gvPessoas.DataSource = ListaPessoa;
+            gvPessoas.DataBind();
 
-                if (DateTime.Now.Month < dbPessoa.DtNascto.Month || (DateTime.Now.Month == dbPessoa.DtNascto.Month && DateTime.Now.Day < dbPessoa.DtNascto.Day))
-                {
-                    dbPessoa.Idade--;
-                }
+            PegaValorMax();
+            PegaValorMin();
 
-                dbPessoa.Dinheiro = Decimal.Parse(txtVrDinheiro.Text);
 
-                ListaPessoa.Add(dbPessoa);
-                gvPessoas.DataSource = ListaPessoa;
-                gvPessoas.DataBind();
-
-                PegaValorMax();
-                PegaValorMin();
-
-            }
 
             this.ViewState["Lista"] = ListaPessoa;
 
@@ -65,6 +64,11 @@ namespace CadastroPessoas
         protected void btnLimpa_Click(object sender, EventArgs e)
         {
             Utilities.ResetAllControls(pnlPrincipal);
+            lblErroNascto.Visible = false;
+            lblErroNome.Visible = false;
+            lblErroDinheiro.Visible = false;
+            btnEditaPessoa.Visible = false;
+            btnGravaPessoa.Visible = true;
         }
 
         protected void gvPessoas_RowDeleting(object sender, GridViewDeleteEventArgs e)
@@ -73,6 +77,7 @@ namespace CadastroPessoas
             ListaPessoa.RemoveAt(e.RowIndex);
             gvPessoas.DataSource = ListaPessoa;
             gvPessoas.DataBind();
+            btnLimpa_Click(null, null);
 
             PegaValorMax();
             PegaValorMin();
@@ -86,12 +91,99 @@ namespace CadastroPessoas
             DateTime data = DateTime.Parse(gvPessoas.SelectedDataKey["DtNascto"].ToString());
             txtDtNascto.Text = data.ToString("dd/MM/yyyy");
             txtVrDinheiro.Text = gvPessoas.SelectedDataKey["Dinheiro"].ToString();
-            btnGravaPessoa.Text = "Editar";
             lblEdita.Text = gvPessoas.SelectedIndex.ToString();
+            btnGravaPessoa.Visible = false;
+            btnEditaPessoa.Visible = true;
         }
 
-        protected void EditaLinha()
+        protected bool ValidaCampos()
         {
+            if (string.IsNullOrEmpty(txtNomePessoa.Text.Trim()))
+            {
+                lblErroNome.Visible = true;
+                return false;
+            }
+
+            DateTime temp;
+
+            if (!DateTime.TryParse(txtDtNascto.Text, out temp))
+            {
+                lblErroNascto.Visible = true;
+                return false;
+            }
+
+
+            Decimal tempdec;
+
+            if(!Decimal.TryParse(txtVrDinheiro.Text, out tempdec))
+            {
+                lblErroDinheiro.Visible = true;
+                return false;
+            }
+
+            return true;
+        }
+
+        protected void PegaValorMax()
+        {
+
+            decimal maxValue = -1;
+            int i = 0;
+            int MaxIndex = 0;
+            string Nome = string.Empty;
+           
+            foreach (GridViewRow item in gvPessoas.Rows)
+            {
+                if (decimal.Parse(item.Cells[2].Text) > maxValue)
+                {
+                    maxValue = decimal.Parse(item.Cells[2].Text);
+                    MaxIndex = i;
+                    Nome = item.Cells[0].Text;
+                }
+
+                i++;
+            }
+
+            lblDinheiroMax.Text = "Pessoa com mais dinheiro: " + Nome + " Valor: R$" + maxValue;
+        }
+
+        protected void PegaValorMin()
+        {
+
+            decimal minValue = -1;
+            int i = 0;
+            string Nome = string.Empty;
+           
+            foreach (GridViewRow item in gvPessoas.Rows)
+            {
+                if (decimal.Parse(item.Cells[2].Text) < minValue && i > 0)
+                {
+                    minValue = decimal.Parse(item.Cells[2].Text);
+                    Nome = item.Cells[0].Text;
+                }
+                else if (i <= 0)
+                {
+                    minValue = decimal.Parse(item.Cells[2].Text);
+                    Nome = item.Cells[0].Text;
+                }
+
+                i++;
+            }
+
+            lblDinheiroMin.Text = "Pessoa com menos dinheiro: " + Nome + " Valor: R$" + minValue;
+        }
+
+        protected void btnEditaPessoa_Click(object sender, EventArgs e)
+        {
+            ValidaCampos();
+
+            ListaPessoa = this.ViewState["Lista"] as List<Pessoa>;
+
+            if (ListaPessoa == null)
+            {
+                ListaPessoa = new List<Pessoa>();
+            }
+
             ListaPessoa = this.ViewState["Lista"] as List<Pessoa>;
 
             var dbPessoa = new Pessoa();
@@ -119,65 +211,10 @@ namespace CadastroPessoas
             btnGravaPessoa.Text = "Gravar";
             PegaValorMax();
             PegaValorMin();
+
+            this.ViewState["Lista"] = ListaPessoa;
+
+            btnLimpa_Click(null, null);
         }
-
-        protected void ValidaCampos()
-        {
-            if (string.IsNullOrEmpty(txtNomePessoa.Text))
-            {
-                lblErroNome.Visible = true;
-                return;
-            }
-        }
-
-        protected void PegaValorMax()
-        {
-
-            decimal maxValue = -1;
-            int i = 0;
-            int MaxIndex = 0;
-            string Nome = string.Empty;
-            /* see it is assumed that the gridview column contains a number greater than or equal to 0*/
-            foreach (GridViewRow item in gvPessoas.Rows)
-            {
-                if (decimal.Parse(item.Cells[2].Text) > maxValue)
-                {
-                    maxValue = decimal.Parse(item.Cells[2].Text);
-                    MaxIndex = i;
-                    Nome = item.Cells[0].Text;
-                }
-
-                i++;
-            }
-
-            lblDinheiroMax.Text = "Pessoa com mais dinheiro: " + Nome + " Valor: R$" + maxValue;
-        }
-
-        protected void PegaValorMin()
-        {
-
-            decimal minValue = -1;
-            int i = 0;
-            string Nome = string.Empty;
-            /* see it is assumed that the gridview column contains a number greater than or equal to 0*/
-            foreach (GridViewRow item in gvPessoas.Rows)
-            {
-                if (decimal.Parse(item.Cells[2].Text) < minValue && i > 0)
-                {
-                    minValue = decimal.Parse(item.Cells[2].Text);
-                    Nome = item.Cells[0].Text;
-                }
-                else if (i <= 0)
-                {
-                    minValue = decimal.Parse(item.Cells[2].Text);
-                    Nome = item.Cells[0].Text;
-                }
-
-                i++;
-            }
-
-            lblDinheiroMin.Text = "Pessoa com menos dinheiro: " + Nome + " Valor: R$" + minValue;
-        }
-
     }
 }

@@ -49,6 +49,15 @@ namespace CadastroPessoas {
         protected global::System.Web.UI.WebControls.TextBox txtDtNascto;
         
         /// <summary>
+        /// Controle lblErroNascto.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Modificar a declaração do campo de movimento do arquivo de designer para o arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblErroNascto;
+        
+        /// <summary>
         /// Controle txtVrDinheiro.
         /// </summary>
         /// <remarks>
@@ -58,6 +67,15 @@ namespace CadastroPessoas {
         protected global::System.Web.UI.WebControls.TextBox txtVrDinheiro;
         
         /// <summary>
+        /// Controle lblErroDinheiro.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Modificar a declaração do campo de movimento do arquivo de designer para o arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblErroDinheiro;
+        
+        /// <summary>
         /// Controle btnGravaPessoa.
         /// </summary>
         /// <remarks>
@@ -65,6 +83,15 @@ namespace CadastroPessoas {
         /// Modificar a declaração do campo de movimento do arquivo de designer para o arquivo code-behind.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnGravaPessoa;
+        
+        /// <summary>
+        /// Controle btnEditaPessoa.
+        /// </summary>
+        /// <remarks>
+        /// Campo gerado automaticamente.
+        /// Modificar a declaração do campo de movimento do arquivo de designer para o arquivo code-behind.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnEditaPessoa;
         
         /// <summary>
         /// Controle btnLimpa.
